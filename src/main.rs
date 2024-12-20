@@ -188,7 +188,7 @@ impl Scanner {
     }
 
     fn identifier(&mut self) {
-        while self.peek().is_alphanumeric() {
+        while self.peek().is_alphanumeric() || self.peek() == '_' {
             self.current += 1;
         }
 
