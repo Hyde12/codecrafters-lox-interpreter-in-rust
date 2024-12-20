@@ -5,7 +5,7 @@ use std::process::exit;
 use std::collections::HashMap;
 
 struct Scanner {
-    source: String,
+    source: Vec<char>,
     tokens: Vec<(String, String, String, i32)>, // token_type, text, literal, line
     start: usize,
     current: usize,
@@ -17,7 +17,7 @@ struct Scanner {
 impl Scanner { 
     fn new(source: String) -> Self {
         Self {
-            source,
+            source: source.chars().collect(),
             tokens: Vec::new(),
             start: 0,
             current: 0,
@@ -55,7 +55,7 @@ impl Scanner {
     }
 
     fn scan_token(&mut self, current: usize) {
-        let char = self.source.chars().nth(current).unwrap();
+        let char = self.source[current];
         self.current += 1;
 
         match char {
@@ -137,14 +137,14 @@ impl Scanner {
     }
 
     fn add_token(&mut self, token_type: String, literal: String) {
-        let text = &self.source[self.start..self.current];
+        let text = self.source[self.start..self.current].iter().collect::<String>();
 
-        self.tokens.push((token_type, text.to_string(), literal, self.line));
+        self.tokens.push((token_type, text, literal, self.line));
     }
 
     fn operator_match(&mut self, expected: char) -> bool {
         if self.is_at_end() { return false }
-        if self.source.chars().nth(self.current).unwrap_or( ' ' ) != expected { return false }
+        if self.source[self.current] != expected { return false }
         self.current += 1;
 
         true
@@ -163,7 +163,7 @@ impl Scanner {
 
         self.current += 1;
 
-        self.add_token(String::from("STRING"), self.source[self.start+1..self.current-1].to_string());
+        self.add_token(String::from("STRING"), self.source[self.start+1..self.current-1].iter().collect::<String>());
     }
 
     fn number(&mut self) {
@@ -177,7 +177,7 @@ impl Scanner {
             while self.peek().is_numeric() { self.current += 1 }
         }
 
-        let value = &self.source[self.start..self.current];
+        let value = self.source[self.start..self.current].iter().collect::<String>();
         let number = value.parse::<f32>().unwrap();
 
         if number == number.floor() {
@@ -192,7 +192,8 @@ impl Scanner {
             self.current += 1;
         }
 
-        let token_type= self.reserved_words.get(&self.source[self.start..self.current]).unwrap_or(&"IDENTIFIER");
+        let text: String = self.source[self.start..self.current].iter().collect();
+        let token_type= self.reserved_words.get(text.as_str()).unwrap_or(&"IDENTIFIER");
 
         self.add_null_token(token_type.to_string());
     }
@@ -203,12 +204,12 @@ impl Scanner {
 
     fn peek(&self) -> char {
         if self.is_at_end() { return '\0' }
-        self.source.chars().nth(self.current).unwrap_or('\0')
+        self.source[self.current]
     }
 
     fn peek_next(&self) -> char {
         if self.current + 1 >= self.source.len() { return '\0' }
-        self.source.chars().nth(self.current + 1).unwrap_or('\0')
+        self.source[self.current + 1]
     }
 }
 
