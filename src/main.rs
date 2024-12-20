@@ -34,14 +34,23 @@ impl Scanner {
 
     fn scan_token(&mut self, current: usize) {
         let char = self.source.chars().nth(current - 1).unwrap();
-        let null = "null".to_string();
         match char {
-            '(' => self.add_token("LEFT_PAREN".to_string(), null),
-            ')' => self.add_token("RIGHT_PAREN".to_string(), null),
-            '{' => self.add_token("LEFT_BRACE".to_string(), null),
-            '}' => self.add_token("RIGHT_BRACE".to_string(), null),
-            _ => println!("no!")
+            '(' => self.add_null_token("LEFT_PAREN".to_string()),
+            ')' => self.add_null_token("RIGHT_PAREN".to_string()),
+            '{' => self.add_null_token("LEFT_BRACE".to_string()),
+            '}' => self.add_null_token("RIGHT_BRACE".to_string()),
+            ',' => self.add_null_token("COMMA".to_string()),
+            '.' => self.add_null_token("DOT".to_string()),
+            '-' => self.add_null_token("MINUS".to_string()),
+            '+' => self.add_null_token("PLUS".to_string()),
+            ';' => self.add_null_token("SEMICOLON".to_string()),
+            '*' => self.add_null_token("STAR".to_string()),
+            _ => writeln!(io::stderr(), "Unexpected character.").unwrap(),
         }
+    }
+
+    fn add_null_token(&mut self, token_type: String) {
+        self.add_token(token_type, "null".to_string());
     }
 
     fn add_token(&mut self, token_type: String, literal: String) {
