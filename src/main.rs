@@ -38,6 +38,8 @@ impl Scanner {
         match char {
             '(' => self.add_token("LEFT_PAREN".to_string(), null),
             ')' => self.add_token("RIGHT_PAREN".to_string(), null),
+            '{' => self.add_token("LEFT_BRACE".to_string(), null),
+            '}' => self.add_token("RIGHT_BRACE".to_string(), null),
             _ => println!("no!")
         }
     }
