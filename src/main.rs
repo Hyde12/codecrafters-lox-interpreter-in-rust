@@ -58,7 +58,33 @@ impl Scanner {
 
                 self.add_null_token(token_type);
             }
+            '!' => {
+                let token_type: String = if self.operator_match('=') {
+                    String::from("BANG_EQUAL")
+                } else {
+                    String::from("BANG")
+                };
 
+                self.add_null_token(token_type);
+            }
+            '<' => {
+                let token_type: String = if self.operator_match('=') {
+                    String::from("LESS_EQUAL")
+                } else {
+                    String::from("LESS")
+                };
+
+                self.add_null_token(token_type);
+            }
+            '>' => {
+                let token_type: String = if self.operator_match('=') {
+                    String::from("MORE_EQUAL")
+                } else {
+                    String::from("MORE")
+                };
+
+                self.add_null_token(token_type);
+            }
             _ => { 
                 eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
                 self.errors += 1;
