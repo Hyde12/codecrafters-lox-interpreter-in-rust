@@ -127,7 +127,7 @@ impl Scanner {
 
     fn peek(&self) -> char {
         if self.is_at_end() { return '\0' }
-        self.source.chars().nth(self.current).unwrap()
+        self.source.chars().nth(self.current).unwrap_or('\0')
     }
 }
 
