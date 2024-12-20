@@ -131,6 +131,7 @@ impl Scanner {
         if self.is_at_end() { 
             eprintln!("[line {}] Error: Unterminated string.", self.line);
             self.errors = true;
+            return;
         }
 
         self.current += 1;
