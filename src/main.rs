@@ -95,6 +95,8 @@ impl Scanner {
                 };
 
             }
+            '\n' => self.line += 1,
+            '\t' | '\r' | ' ' => {}
             _ => { 
                 eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
                 self.errors += 1;
