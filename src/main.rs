@@ -76,7 +76,7 @@ impl Scanner {
 
     fn operator_match(&mut self, expected: char) -> bool {
         if self.is_at_end() { return false }
-        if self.source.chars().nth(self.current + 2).unwrap_or( ' ' ) != expected { return false }
+        if self.source.chars().nth(self.current + 1).unwrap_or( ' ' ) != expected { return false }
         self.current += 1;
         true
     }
