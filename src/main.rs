@@ -2,6 +2,57 @@ use std::env;
 use std::fs;
 use std::io::{self, Write};
 
+struct Scanner {
+    source: String,
+    tokens: Vec<(String, String, String, i32)>, // type, text, literal, line
+    start: usize,
+    current: usize,
+    line: i32,
+}
+
+impl Scanner { 
+    fn new(source: String) -> Self {
+        Self {
+            source,
+            tokens: Vec::new(),
+            start: 0,
+            current: 0,
+            line: 1,
+        }
+    }
+
+    fn scan_tokens(&mut self) {
+        while !self.is_at_end() {
+            self.start = self.current;
+            self.current += 1;
+
+            self.scan_token(self.current);
+        }
+
+        self.tokens.push((String::from("EOF"), String::from(""), String::from("null"), self.line));
+    }
+
+    fn scan_token(&mut self, current: usize) {
+        let char = self.source.chars().nth(current).unwrap();
+        let null = "null".to_string();
+        match char {
+            '(' => self.add_token("LEFT_PAREN".to_string(), null),
+            ')' => self.add_token("RIGHT_PAREN".to_string(), null),
+            _ => println!("no!")
+        }
+    }
+
+    fn add_token(&mut self, token_type: String, literal: String) {
+        let text = &self.source[self.start..self.current];
+        self.tokens.push((token_type, text.to_string(), literal, self.line));
+    }
+
+    fn is_at_end(&self) -> bool {
+        self.current >= self.source.len()
+    }
+}
+
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 3 {
@@ -23,10 +74,11 @@ fn main() {
             });
 
             // Uncomment this block to pass the first stage
-            if !file_contents.is_empty() {
-                panic!("Scanner not implemented");
-            } else {
-                println!("EOF  null"); // Placeholder, remove this line when implementing the scanner
+            let mut to_scan = Scanner::new(file_contents);
+            to_scan.scan_tokens();
+
+            for token in to_scan.tokens {
+                println!("{:?}", token);
             }
         }
         _ => {
