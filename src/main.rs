@@ -155,9 +155,10 @@ impl Scanner {
         }
 
         let value = &self.source[self.start..self.current];
+        let rounded = value.parse::<f32>().unwrap().floor().to_string();
 
-        if value == value.parse::<f32>().unwrap().floor().to_string() {
-            self.add_token(String::from("NUMBER"), value.to_string() + ".0");
+        if value == rounded {
+            self.add_token(String::from("NUMBER"), rounded + ".0");
         } else {
             self.add_token(String::from("NUMBER"), value.to_string());
         }
