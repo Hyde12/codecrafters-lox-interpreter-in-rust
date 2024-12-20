@@ -87,9 +87,10 @@ impl Scanner {
             }
             '/' => {
                 if self.operator_match('/') {
-                    while !self.is_at_end() && self.source.chars().nth(current).unwrap() != '\n' {
+                    while self.peek() != '\n' && !self.is_at_end() {
                         self.current += 1;
                     }
+          
                 } else {
                     self.add_null_token(String::from("SLASH"));
                 };
@@ -122,6 +123,11 @@ impl Scanner {
 
     fn is_at_end(&self) -> bool {
         self.current >= self.source.len()
+    }
+
+    fn peek(&self) -> char {
+        if self.is_at_end() { return '\0' }
+        self.source.chars().nth(self.current).unwrap()
     }
 }
 
