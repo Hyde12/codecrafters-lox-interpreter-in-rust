@@ -85,6 +85,16 @@ impl Scanner {
 
                 self.add_null_token(token_type);
             }
+            '/' => {
+                if self.operator_match('/') {
+                    while !self.is_at_end() && self.source.chars().nth(current).unwrap() != '\n' {
+                        self.current += 1;
+                    }
+                } else {
+                    self.add_null_token(String::from("SLASH"));
+                };
+
+            }
             _ => { 
                 eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
                 self.errors += 1;
