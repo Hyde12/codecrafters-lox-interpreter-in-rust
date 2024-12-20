@@ -9,6 +9,7 @@ struct Scanner {
     start: usize,
     current: usize,
     line: i32,
+    errors: usize,
 }
 
 impl Scanner { 
@@ -19,6 +20,7 @@ impl Scanner {
             start: 0,
             current: 0,
             line: 1,
+            errors: 0,
         }
     }
 
@@ -48,7 +50,7 @@ impl Scanner {
             '*' => self.add_null_token("STAR".to_string()),
             _ => { 
                 eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
-                exit(65);
+                self.errors += 1;
             }
         }
     }
@@ -96,6 +98,8 @@ fn main() {
                 let (token_type, text, literal, _line) = token;
                 println!("{token_type} {text} {literal}");
             }
+
+            if to_scan.errors > 0 { exit(65) }
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
