@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::io::{self, Write};
+use std::process::exit;
 
 struct Scanner {
     source: String,
@@ -45,7 +46,10 @@ impl Scanner {
             '+' => self.add_null_token("PLUS".to_string()),
             ';' => self.add_null_token("SEMICOLON".to_string()),
             '*' => self.add_null_token("STAR".to_string()),
-            _ => writeln!(io::stderr(), "Unexpected character.").unwrap(),
+            _ => { 
+                eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
+                exit(65);
+            }
         }
     }
 
