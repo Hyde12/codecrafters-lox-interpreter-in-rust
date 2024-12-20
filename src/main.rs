@@ -9,7 +9,7 @@ struct Scanner {
     start: usize,
     current: usize,
     line: i32,
-    errors: usize,
+    errors: bool,
 }
 
 impl Scanner { 
@@ -20,7 +20,7 @@ impl Scanner {
             start: 0,
             current: 0,
             line: 1,
-            errors: 0,
+            errors: false,
         }
     }
 
@@ -96,11 +96,12 @@ impl Scanner {
                 };
 
             }
+            '"' => self.string(),
             '\n' => self.line += 1,
             '\t' | '\r' | ' ' => {}
             _ => { 
                 eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
-                self.errors += 1;
+                self.errors = true;
             }
         }
     }
@@ -118,7 +119,21 @@ impl Scanner {
         if self.is_at_end() { return false }
         if self.source.chars().nth(self.current).unwrap_or( ' ' ) != expected { return false }
         self.current += 1;
+
         true
+    }
+
+    fn string(&mut self) {
+        while self.peek() != '\"' && !self.is_at_end() {
+            self.current += 1;
+        }
+
+        if self.is_at_end() { 
+            eprintln!("[line {}] Error: Unterminated string.", self.line);
+            self.errors = true;
+        }
+
+        self.add_token(String::from("STRING"), self.source[self.start+1..self.current-1].to_string());
     }
 
     fn is_at_end(&self) -> bool {
@@ -161,7 +176,7 @@ fn main() {
                 println!("{token_type} {text} {literal}");
             }
 
-            if to_scan.errors > 0 { exit(65) }
+            if to_scan.errors { exit(65) }
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
