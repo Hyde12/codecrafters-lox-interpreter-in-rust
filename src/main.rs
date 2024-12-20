@@ -27,7 +27,6 @@ impl Scanner {
     fn scan_tokens(&mut self) {
         while !self.is_at_end() {
             self.start = self.current;
-            self.current += 1;
 
             self.scan_token(self.current);
         }
@@ -36,7 +35,9 @@ impl Scanner {
     }
 
     fn scan_token(&mut self, current: usize) {
-        let char = self.source.chars().nth(current - 1).unwrap();
+        let char = self.source.chars().nth(current).unwrap();
+        self.current += 1;
+
         match char {
             '(' => self.add_null_token("LEFT_PAREN".to_string()),
             ')' => self.add_null_token("RIGHT_PAREN".to_string()),
@@ -76,7 +77,7 @@ impl Scanner {
 
     fn operator_match(&mut self, expected: char) -> bool {
         if self.is_at_end() { return false }
-        if self.source.chars().nth(self.current + 1).unwrap_or( ' ' ) != expected { return false }
+        if self.source.chars().nth(self.current).unwrap_or( ' ' ) != expected { return false }
         self.current += 1;
         true
     }
