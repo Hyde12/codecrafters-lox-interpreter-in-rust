@@ -48,7 +48,16 @@ impl Scanner {
             '+' => self.add_null_token("PLUS".to_string()),
             ';' => self.add_null_token("SEMICOLON".to_string()),
             '*' => self.add_null_token("STAR".to_string()),
-            '=' => self.add_null_token((if self.operator_match('=') { "EQUAL_EQUAL" } else { "EQUAL" }).to_string()),
+            '=' => {
+                let token_type: String = if self.operator_match('=') {
+                    String::from("EQUAL_EQUAL")
+                } else {
+                    String::from("EQUAL")
+                };
+
+                self.add_null_token(token_type);
+            }
+
             _ => { 
                 eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
                 self.errors += 1;
@@ -65,10 +74,10 @@ impl Scanner {
         self.tokens.push((token_type, text.to_string(), literal, self.line));
     }
 
-    fn operator_match(&self, expected: char) -> bool {
+    fn operator_match(&mut self, expected: char) -> bool {
         if self.is_at_end() { return false }
-        if self.source.chars().nth(self.current - 2).unwrap_or( ' ' ) != expected { return false }
-
+        if self.source.chars().nth(self.current + 2).unwrap_or( ' ' ) != expected { return false }
+        self.current += 1;
         true
     }
 
