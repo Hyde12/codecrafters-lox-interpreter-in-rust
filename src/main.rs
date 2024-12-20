@@ -4,7 +4,7 @@ use std::io::{self, Write};
 
 struct Scanner {
     source: String,
-    tokens: Vec<(String, String, String, i32)>, // type, text, literal, line
+    tokens: Vec<(String, String, String, i32)>, // token_type, text, literal, line
     start: usize,
     current: usize,
     line: i32,
@@ -78,7 +78,8 @@ fn main() {
             to_scan.scan_tokens();
 
             for token in to_scan.tokens {
-                println!("{:?}", token);
+                let (token_type, text, literal, _line) = token;
+                println!("{token_type} {text} {literal}");
             }
         }
         _ => {
