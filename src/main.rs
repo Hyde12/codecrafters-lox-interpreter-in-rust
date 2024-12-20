@@ -33,7 +33,7 @@ impl Scanner {
     }
 
     fn scan_token(&mut self, current: usize) {
-        let char = self.source.chars().nth(current).unwrap();
+        let char = self.source.chars().nth(current - 1).unwrap();
         let null = "null".to_string();
         match char {
             '(' => self.add_token("LEFT_PAREN".to_string(), null),
