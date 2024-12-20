@@ -133,6 +133,8 @@ impl Scanner {
             self.errors = true;
         }
 
+        self.current += 1;
+
         self.add_token(String::from("STRING"), self.source[self.start+1..self.current-1].to_string());
     }
 
