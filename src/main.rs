@@ -102,6 +102,8 @@ impl Scanner {
             _ => { 
                 if char.is_numeric() {
                     self.number();
+                } else if char.is_alphabetic() || char == '_' {
+                    self.identifier();
                 } else {
                     eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
                     self.errors = true;
@@ -162,6 +164,14 @@ impl Scanner {
         } else {
             self.add_token(String::from("NUMBER"), value.to_string());
         }
+    }
+
+    fn identifier(&mut self) {
+        while self.peek().is_alphanumeric() {
+            self.current += 1;
+        }
+
+        self.add_null_token(String::from("IDENTIFIER"));
     }
 
     fn is_at_end(&self) -> bool {
