@@ -80,7 +80,7 @@ impl Scanner {
                 let token_type: String = if self.operator_match('=') {
                     String::from("GREATER_EQUAL")
                 } else {
-                    String::from("MORE")
+                    String::from("GREATER")
                 };
 
                 self.add_null_token(token_type);
