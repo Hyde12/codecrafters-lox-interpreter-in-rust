@@ -78,7 +78,7 @@ impl Scanner {
             }
             '>' => {
                 let token_type: String = if self.operator_match('=') {
-                    String::from("MORE_EQUAL")
+                    String::from("GREATER_EQUAL")
                 } else {
                     String::from("MORE")
                 };
