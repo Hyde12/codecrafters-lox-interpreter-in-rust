@@ -100,8 +100,12 @@ impl Scanner {
             '\n' => self.line += 1,
             '\t' | '\r' | ' ' => {}
             _ => { 
-                eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
-                self.errors = true;
+                if char.is_numeric() {
+                    self.number();
+                } else {
+                    eprintln!("[line {}] Error: Unexpected character: {}", self.line, char);
+                    self.errors = true;
+                }
             }
         }
     }
@@ -139,6 +143,27 @@ impl Scanner {
         self.add_token(String::from("STRING"), self.source[self.start+1..self.current-1].to_string());
     }
 
+    fn number(&mut self) {
+        while self.peek().is_numeric() && !self.is_at_end() {
+            self.current += 1;
+        }
+
+        if self.peek() == '.' && self.peek_next().is_numeric() {
+            self.current += 1;
+
+            while self.peek().is_numeric() { self.current += 1 }
+        }
+
+        let value = &self.source[self.start..self.current];
+        let number = value.parse::<f32>().unwrap();
+
+        if number == number.floor() {
+            self.add_token(String::from("NUMBER"), value.to_string() + ".0");
+        } else {
+            self.add_token(String::from("NUMBER"), value.to_string());
+        }
+    }
+
     fn is_at_end(&self) -> bool {
         self.current >= self.source.len()
     }
@@ -146,6 +171,11 @@ impl Scanner {
     fn peek(&self) -> char {
         if self.is_at_end() { return '\0' }
         self.source.chars().nth(self.current).unwrap_or('\0')
+    }
+
+    fn peek_next(&self) -> char {
+        if self.current + 1 >= self.source.len() { return '\0' }
+        self.source.chars().nth(self.current + 1).unwrap_or('\0')
     }
 }
 
