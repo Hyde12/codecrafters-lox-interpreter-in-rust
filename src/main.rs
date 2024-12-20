@@ -2,6 +2,7 @@ use std::env;
 use std::fs;
 use std::io::{self, Write};
 use std::process::exit;
+use std::collections::HashMap;
 
 struct Scanner {
     source: String,
@@ -10,6 +11,7 @@ struct Scanner {
     current: usize,
     line: i32,
     errors: bool,
+    reserved_words: HashMap<&'static str, &'static str>
 }
 
 impl Scanner { 
@@ -21,6 +23,24 @@ impl Scanner {
             current: 0,
             line: 1,
             errors: false,
+            reserved_words: HashMap::from([
+                ("and", "AND"),
+                ("class", "CLASS"),
+                ("else", "ELSE"),
+                ("true", "TRUE"),
+                ("false", "FALSE"),
+                ("for", "FOR"),
+                ("while", "WHILE"),
+                ("fun", "FUN"),
+                ("if", "IF"),
+                ("nil", "NIL"),
+                ("or", "OR"),
+                ("print", "PRINT"),
+                ("return", "RETURN"),
+                ("super", "SUPER"),
+                ("this", "THIS"),
+                ("var", "VAR"),
+            ]),
         }
     }
 
@@ -118,6 +138,7 @@ impl Scanner {
 
     fn add_token(&mut self, token_type: String, literal: String) {
         let text = &self.source[self.start..self.current];
+
         self.tokens.push((token_type, text.to_string(), literal, self.line));
     }
 
@@ -171,7 +192,9 @@ impl Scanner {
             self.current += 1;
         }
 
-        self.add_null_token(String::from("IDENTIFIER"));
+        let token_type= self.reserved_words.get(&self.source[self.start..self.current]).unwrap_or(&"IDENTIFIER");
+
+        self.add_null_token(token_type.to_string());
     }
 
     fn is_at_end(&self) -> bool {
