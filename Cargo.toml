@@ -1,9 +1,12 @@
 [package]
-name = "codecrafters-interpreter"
+name = "rlocks"
 version = "0.1.0"
 authors = ["Codecrafters <hello@codecrafters.io>"]
 edition = "2021"
 rust-version = "1.80"
+
+[lib]
+name = "lib"
 
 [dependencies]
 anyhow = "1.0.68"                                # error handling
